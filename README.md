@@ -17,6 +17,13 @@ A full-stack blog application that allows users to create, update, delete posts 
 - [License](#license)
 - [Contact](#contact)
 
+  ![Profile Image](https://github.com/charanteja-7/Blog-App-V2/blob/main/assets/allblogs.png?raw=true)
+
+ ![Profile Image](https://github.com/charanteja-7/Blog-App-V2/blob/main/assets/myblogs.png?raw=true)
+
+ ![Profile Image](https://github.com/charanteja-7/Blog-App-V2/blob/main/assets/profile.png?raw=true)
+
+
 ## Features
 
 - **User Authentication**: Register, login, and logout features.
