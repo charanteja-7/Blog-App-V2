@@ -1,6 +1,4 @@
-Here’s a well-structured README file for your full-stack blog application. Feel free to customize it further based on your preferences!
 
----
 
 # Blog Application
 
@@ -66,7 +64,7 @@ To get started with this application, follow these steps:
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/yourusername/your-repo-name.git
+   git clone https://github.com/charanteja-7/Blog-App-V2.git
    cd your-repo-name
    ```
 
@@ -95,7 +93,7 @@ To get started with this application, follow these steps:
 6. **Run the frontend application**:
 
    ```bash
-   npm start
+   npm run dev
    ```
 
 ## API Endpoints
@@ -123,20 +121,15 @@ To get started with this application, follow these steps:
 
 ## Usage
 
-After following the installation instructions, navigate to `http://localhost:3000` in your web browser to access the application. You can register a new account, log in, and start creating posts and comments!
+After following the installation instructions, navigate to `http://localhost:5173` in your web browser to access the application. You can register a new account, log in, and start creating posts and comments!
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue if you encounter any problems.
 
-## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
-For any inquiries, feel free to reach out to me at [your-email@example.com].
+For any inquiries, feel free to reach out to me at [chukkalacharanteja9@gmail.com].
 
----
-
-Feel free to replace placeholder text (like repository links and your email) with your actual details. If you have any other requirements or need further adjustments, let me know!
