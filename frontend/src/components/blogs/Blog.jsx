@@ -66,7 +66,9 @@ const Blog = () => {
       const response = await axios.put(
         `${Url}/posts/${id}/like`,
         { userId: userData._id },
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers: { 'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+         } }
       );
 
       if (response.data.success) {
