@@ -59,7 +59,7 @@ const About = () => {
           <h5 className="text-1xl font-bold md:text-2xl dark:text-white">
             Community Guidelines
           </h5>
-          <p className="text-lg text-gray-800 dark:text-neutral-200">
+          <div className="text-lg text-gray-800 dark:text-neutral-200">
             To ensure a positive experience for everyone, I encourage all users
             to:
             <ul className="text-lg text-gray-800 dark:text-neutral-200 ml-5">
@@ -73,7 +73,7 @@ const About = () => {
                 Support one another in our blogging journeys
               </li>
             </ul>
-          </p>
+          </div>
 
           <blockquote className="text-center p-4 sm:px-7">
             <p className="text-xl font-medium text-gray-800 md:text-2xl md:leading-normal xl:text-2xl xl:leading-normal dark:text-neutral-200">

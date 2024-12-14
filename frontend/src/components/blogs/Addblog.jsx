@@ -14,19 +14,20 @@ import EditorToolbar, { modules, formats } from "./EditorToolbar";
 
 const Addblog = () => { 
   const navigate = useNavigate();
-  const [title, setTitle]  = useState('');
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Technology');
   const [coverImage, setCoverImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-  const {userData} = useContext(UserContext);
-  const {addBlog} = useContext(BlogContext);
-  //navigate to myblogs page
-  const handleNavigate = ()=>{
-      navigate('/myblogs');
-  }
+  const { userData } = useContext(UserContext);
+  const { addBlog } = useContext(BlogContext);
 
-  //handle setting and display image
+  // Navigate to 'myblogs' page
+  const handleNavigate = () => {
+    navigate('/myblogs');
+  };
+
+  // Handle setting and displaying image preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -35,10 +36,38 @@ const Addblog = () => {
     }
   };
 
-  //create a new blog post
+   const uploadToCloudinary = async(file)=>{
+    const data = new FormData();
+    data.append("file", file);
+    data.append(
+      "upload_preset",
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    );
+    data.append("cloud_name", import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+    data.append("folder", "Cloudinary-React");
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+      const res = await response.json();
+      
+      return res.secure_url;
+    
+    } catch (error) {
+      console.log(error);
+      
+    }
+   }  
+
+  // Create a new blog post
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+   
+    
     const formData = new FormData();
     formData.append('title', title);
     formData.append('category', category);
@@ -46,27 +75,26 @@ const Addblog = () => {
     formData.append('userId', userData._id);
 
     if (coverImage) {
-        formData.append('coverImage', coverImage); 
+        const link =await uploadToCloudinary(coverImage);
+        formData.append('coverImageURL', link); 
     }
-
     try {
-        const response = await axios.post(Url + `/posts`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            withCredentials: true,
-        });
-        if (response) {
-            toast.success("Blog created successfully");
-            addBlog(response.data);
-            handleNavigate(); 
-        }
+      const response = await axios.post(`${Url}/posts`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (response) {
+        toast.success("Blog created successfully");
+        addBlog(response.data);
+        handleNavigate(); // Navigate to the 'myblogs' page
+      }
     } catch (error) {
-        console.error("Blog creation error:", error.response ? error.response.data : error.message);
-        toast.error("Unable to create the blog");
+      console.error("Blog creation error:", error.response ? error.response.data : error.message);
+      toast.error("Unable to create the blog");
     }
-};
+  };
 
 
   return (

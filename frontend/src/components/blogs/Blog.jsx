@@ -4,7 +4,7 @@ import BlogContext from "../../context/BlogContext";
 import UserContext from "../../context/UserContext";
 import RelatedMedia from "./RelatedMedia";
 import Comments from "../comments/Comments";
-import { Url, IF } from "../../url";
+import { Url} from "../../url";
 import axios from "axios";
 import { toast } from "react-toastify";
 import parse from "html-react-parser";
@@ -189,7 +189,7 @@ const Blog = () => {
               <figure className="relative w-full">
                 <img
                   className="size-full rounded-xl"
-                  src={IF + `/${blog.coverImageURL}`}
+                  src={blog.coverImageURL}
                   alt="Blog Image"
                 />
               </figure>
@@ -332,7 +332,7 @@ const Blog = () => {
               <a className="block shrink-0 focus:outline-none" href="#">
                 <img
                   className="size-12 rounded-full object-cover"
-                  src={IF + `/${blog.userId.profileImageUrl}`}
+                  src={blog.userId.profileImageUrl}
                   alt="Avatar"
                 />
               </a>

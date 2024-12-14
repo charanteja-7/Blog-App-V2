@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { IF } from "../../url";
+
 
 const RelatedMedia = ({ blogs, currentCategory, currentBlogId }) => {
     const relatedBlogs = blogs
@@ -36,7 +36,7 @@ const RelatedMedia = ({ blogs, currentCategory, currentBlogId }) => {
                         <div className="shrink-0 relative rounded-lg overflow-hidden size-20">
                             <img
                                 className="size-full absolute top-0 start-0 object-cover rounded-lg"
-                                src={IF + `/${blog.coverImageURL}`}
+                                src={blog.coverImageURL}
                                 alt="Blog Image"
                             />
                         </div>

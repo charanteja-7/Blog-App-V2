@@ -2,12 +2,12 @@ import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import UserContext from '../../context/UserContext';
-import { Url, IF } from '../../url';
+import BlogContext from '../../context/BlogContext';
+import { Url} from '../../url';
 import { toast } from "react-toastify";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 axios.defaults.withCredentials = true;
-
 
 const modules = {
   toolbar: [
@@ -42,6 +42,35 @@ const UpdateBlog = () => {
   const [coverImage, setCoverImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const { userData } = useContext(UserContext);
+  const { updateBlog } = useContext(BlogContext);
+
+  // Function to upload image to Cloudinary
+  const uploadToCloudinary = async (file) => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append(
+      "upload_preset",
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    );
+    data.append("cloud_name", import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+    data.append("folder", "Cloudinary-React");
+
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+      const res = await response.json();
+      return res.secure_url;
+    } catch (error) {
+      console.error(error);
+      toast.error("Image upload failed.");
+      return null;
+    }
+  };
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -56,7 +85,7 @@ const UpdateBlog = () => {
         setTitle(title);
         setDescription(description);
         setCategory(category);
-        setImagePreview(coverImageURL ? `${IF}/${coverImageURL}` : '');
+        setImagePreview(coverImageURL ? `${coverImageURL}` : '');
       } catch (error) {
         console.error("Error fetching blog details:", error);
         toast.error("Unable to fetch blog details.");
@@ -88,16 +117,21 @@ const UpdateBlog = () => {
     formData.append('userId', userData._id);
 
     if (coverImage) {
-      formData.append('coverImage', coverImage);
+      const coverImageURL = await uploadToCloudinary(coverImage);
+      if (coverImageURL) {
+        formData.append('coverImageURL', coverImageURL);
+      }
     }
-
+   
+  
     try {
-      await axios.put(`${Url}/posts/${id}`, formData, {
+      const res = await axios.put(`${Url}/posts/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
+      updateBlog(res.data);
       toast.success("Blog updated successfully");
       navigate('/myblogs');
     } catch (error) {
@@ -203,8 +237,6 @@ const UpdateBlog = () => {
                 Update Blog
               </button>
             </div>
-
-           
           </div>
         </div>
       </form>

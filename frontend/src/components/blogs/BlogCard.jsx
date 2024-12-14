@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import BlogContext from "../../context/BlogContext";
 import axios from "axios";
-import { IF,Url } from "../../url";
+import { Url } from "../../url";
 import { toast } from "react-toastify";
 axios.defaults.withCredentials = true;
 
@@ -80,7 +80,7 @@ const BlogCard = ({ blog, isMyBlog }) => {
         <div className="aspect-w-16 aspect-h-12 overflow-hidden bg-gray-100 rounded-2xl dark:bg-neutral-800">
           <img
             className="group-hover:scale-105 group-focus:scale-105 transition-transform duration-500 ease-in-out object-cover rounded-2xl"
-            src={IF+`/${blog.coverImageURL}`}
+            src={blog.coverImageURL}
             alt={blog.title}
           />
         </div>
@@ -92,10 +92,6 @@ const BlogCard = ({ blog, isMyBlog }) => {
           <p className="mt-2 text-sm text-blue-600 dark:text-blue-500">
             {formatDate(blog.createdAt)}
           </p>
-
-        
-          <div   className="prose" dangerouslySetInnerHTML={{__html : truncateText(blog.description,50)}}/>
-
           <div className="mt-3 flex flex-wrap gap-2">
             <span className="py-1.5 px-3 bg-white text-gray-600 border border-gray-200 text-xs sm:text-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 hover:text-gray-900">
               {blog.category}

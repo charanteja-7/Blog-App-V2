@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { IF, Url } from '../../url';
+import { Url } from '../../url';
 import axios from 'axios';
 import UserContext from '../../context/UserContext';
 import { toast } from 'react-toastify';
@@ -27,8 +27,10 @@ const Comments = ({ comments, setComments }) => {
 
     try {
       setIsProcessing(true);
-      const response = await axios.put(`${Url}/comments/${commentId}`, {
+      const response = await axios.put(`${Url}/comments/${commentId}`,{
         comment: editedComment.trim(),
+        },
+        {
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -88,8 +90,8 @@ const Comments = ({ comments, setComments }) => {
             className="flex items-start p-4 bg-gray-200 rounded-lg dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow duration-200"
           >
             <img
-              className="w-10 h-10 rounded-full mr-3"
-              src={IF + `/${comment.userId.profileImageUrl}`}
+              className="w-10 h-10 rounded-full mr-3 object-cover "
+              src={comment.userId.profileImageUrl}
               alt={`${comment.author}'s profile`}
               onError={(e) => {
                 e.target.onerror = null;

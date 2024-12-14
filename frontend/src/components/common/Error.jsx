@@ -5,7 +5,11 @@ const Error = ({message}) => {
   return (
     <main className="flex items-center justify-center h-screen bg-gray-100 text-center">
       <div className="py-10 px-4 sm:px-6 lg:px-8">
-        <h1 className="block text-7xl font-bold text-gray-800 sm:text-9xl dark:text-white">404</h1>
+      <img
+          src="https://res.cloudinary.com/dl61xv85e/image/upload/v1734204377/Cloudinary-React/hpf78atjhxrvhdufjykb.svg"
+          alt="Error illustration"
+          className="w-40 h-40 mx-auto sm:w-48 sm:h-48 lg:w-56 lg:h-56 object-contain"
+        />
         <p className="mt-3 text-gray-600 dark:text-neutral-400">Oops, something went wrong.</p>
       
         <p className="text-gray-600 dark:text-neutral-400 font-bold">{message}</p>

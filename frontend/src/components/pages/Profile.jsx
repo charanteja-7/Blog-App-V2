@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import UserContext from '../../context/UserContext';
 import axios from 'axios';
-import { Url, IF } from '../../url';
+import { Url} from '../../url';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -26,6 +26,29 @@ const Profile = () => {
   const handleImageChange = (e) => {
     setProfileImage(e.target.files[0]);
   };
+  const uploadToCloudinary = async(file)=>{
+    const data = new FormData();
+    data.append("file", file);
+    data.append(
+      "upload_preset",
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    );
+    data.append("cloud_name", import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+    data.append("folder", "Cloudinary-React");
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+      const res = await response.json();
+      return res.secure_url;
+    } catch (error) {
+      console.log(error);  
+    }
+   }  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,7 +59,10 @@ const Profile = () => {
     formData.append('email', userData.email);
     formData.append('bio', bio);
     if (profileImage) {
-      formData.append('profileImageUrl', profileImage);
+      
+        const link =await uploadToCloudinary(profileImage);
+        setProfileImage(link);
+        formData.append('profileImageUrl', link); 
     }
     if (password && newPassword) {
       formData.append('password', password);
@@ -51,6 +77,8 @@ const Profile = () => {
         },
         withCredentials: true,
       });
+   
+      
       setUserData(response.data);
       localStorage.setItem('userData', JSON.stringify(response.data));
       toast.success('Profile updated successfully');
@@ -76,6 +104,8 @@ const Profile = () => {
         toast.success('Account deleted successfully');
         setUserData(null);
         localStorage.removeItem('userData');
+        localStorage.removeItem('token');
+        localStorage.setItem('isLoggedIn','false' );
         navigate('/');
       } catch (error) {
         console.error("Error deleting account:", error);
@@ -88,10 +118,10 @@ const Profile = () => {
     <div className="max-w-4xl px-4 py-10 sm:px-6 lg:px-8 mx-auto pt-20">
       <div className="bg-white rounded-xl shadow p-4 sm:p-7 dark:bg-neutral-800">
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-neutral-200">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-neutral-200 text-center">
             Profile
-          </h2>
-          <p className="text-sm text-gray-600 dark:text-neutral-400">
+          </h1>
+          <p className="text-sm text-gray-600 dark:text-neutral-400 text-center">
             Manage your name, password, and account settings.
           </p>
         </div>
@@ -106,7 +136,7 @@ const Profile = () => {
                 <div className="flex flex-col sm:flex-row items-center gap-4">
                   <img
                     className="inline-block w-16 h-16 rounded-full ring-2 ring-white dark:ring-neutral-900"
-                    src={profileImage ? URL.createObjectURL(profileImage) : `${IF}/${userData.profileImageUrl}`}
+                    src={userData.profileImageUrl}
                     alt="Profile Avatar"
                   />
                   <input type="file" accept="image/*" onChange={handleImageChange} className="w-full" />
@@ -122,7 +152,7 @@ const Profile = () => {
                 id="username"
                 type="text"
                 className="w-full sm:w-3/4 py-2 px-3 border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400"
-                value={userData.username || "no user found"}
+                value={userData.username || ""}
                 onChange={(e) => setUserData({ ...userData, username: e.target.value })}
               />
             </div>

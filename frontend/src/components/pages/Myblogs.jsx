@@ -8,7 +8,6 @@ import { Url } from '../../url';
 import Loader from '../common/Loader';
 import BlogContext from '../../context/BlogContext';
 import { PlusCircle } from 'lucide-react';
-import { toast } from 'react-toastify';
 axios.defaults.withCredentials = true;
 
 const Myblogs = () => {
@@ -33,7 +32,7 @@ const Myblogs = () => {
         const response = await axios.get(`${Url}/posts/user/${userData._id}`);
         setMyblogs(response.data);
       } catch (error) {
-        toast.error("No blogs found!", error.response ? error.response.data : error.message);
+          console.log(error);
       } finally {
         setIsLoading(false);
       }

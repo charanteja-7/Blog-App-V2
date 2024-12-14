@@ -22,7 +22,7 @@ const Home = () => {
         <Loader />
       ) : error ? (
         <div className='text-center w-full h-full text-red-500 font-bold'>
-          {toast.error(error)?"Be the first one to create a blog":""}
+          Be the first one to create a blog
         </div>
       ) : (
         <div className="py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-12">

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 import axios from "axios";
-import { Url, IF } from "../../url";
+import { Url} from "../../url";
 import { toast } from "react-toastify";
 axios.defaults.withCredentials = true;
 
@@ -96,11 +96,7 @@ const Navbar = () => {
             >
               <span className="sr-only">Toggle dashboard menu</span>
               <img
-                src={
-                  userData?.profileImageUrl
-                    ? `${IF}/${userData.profileImageUrl}`
-                    : "avatar.png"
-                }
+                src={userData?.profileImageUrl}
                 alt=""
                 className="size-10 object-cover"
               />
