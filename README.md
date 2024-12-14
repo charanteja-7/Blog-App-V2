@@ -30,6 +30,7 @@ A full-stack blog application that allows users to create, update, delete posts 
 - **Post Management**:
   - Add, update, and delete blog posts.
   - View all user-created blogs.
+  - Support for image uploads via Cloudinary.
 - **Comment Management**:
   - Add, update, and delete comments on posts.
 - **Likes**: Like and unlike posts.
@@ -37,6 +38,8 @@ A full-stack blog application that allows users to create, update, delete posts 
 - **Related Posts**: Display related posts for the current post.
 - **About Section**: Information about the application.
 - **Contact Section**: A way to contact the developer.
+- **Rich Text Editing**: Supports Quill rich text editor for enhanced formatting in blog posts.
+
 
 ## Technologies Used
 
@@ -46,6 +49,9 @@ A full-stack blog application that allows users to create, update, delete posts 
 - **Tailwind CSS**: For styling and responsive design.
 - **React Router DOM**: For navigation.
 - **React Toastify**: For notifications.
+- **Quill**: Rich text editor for enhanced formatting in blog posts.
+- **Cloudinary**: For storing images and media files in the cloud.
+
 
 ### Backend
 - **Node.js**: For the server environment.
@@ -53,7 +59,7 @@ A full-stack blog application that allows users to create, update, delete posts 
 - **Bcrypt**: For hashing passwords.
 - **JWT (JSON Web Tokens)**: For user authentication.
 - **Mongoose**: For interacting with MongoDB.
-- **Multer**: For handling image uploads.
+- **Multer**: For handling image uploads (now integrated with Cloudinary).
 - **Cookie Parser**: For managing cookies.
 
 ## Getting Started
@@ -128,7 +134,7 @@ To get started with this application, follow these steps:
 
 ## Usage
 
-After following the installation instructions, navigate to `http://localhost:5173` in your web browser to access the application. You can register a new account, log in, and start creating posts and comments!
+After following the installation instructions, navigate to `http://localhost:5173` in your web browser to access the application. You can register a new account, log in, and start creating posts and comments! The blog editor now supports rich text formatting using Quill, and images are uploaded to Cloudinary for easy management and scalability.!
 
 ## Contributing
 
