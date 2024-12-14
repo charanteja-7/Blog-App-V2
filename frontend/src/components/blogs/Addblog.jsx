@@ -54,6 +54,7 @@ const Addblog = () => {
         }
       );
       const res = await response.json();
+      console.log("cloudinary", res);
       
       return res.secure_url;
     
@@ -87,6 +88,7 @@ const Addblog = () => {
       });
       if (response) {
         toast.success("Blog created successfully");
+        console.log("returned data " , response.data);
         addBlog(response.data);
         handleNavigate(); // Navigate to the 'myblogs' page
       }
