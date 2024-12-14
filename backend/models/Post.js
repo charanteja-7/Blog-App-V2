@@ -12,6 +12,7 @@ const postSchema  = new mongoose.Schema({
     },
     coverImageURL : {
         type:String,
+        default : "https://res.cloudinary.com/dl61xv85e/image/upload/v1734198459/Cloudinary-React/nom3c5wo4sli2ygvy8ti.png",
         required : true,
     },
     userId: {

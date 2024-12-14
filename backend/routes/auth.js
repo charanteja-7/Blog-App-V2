@@ -52,7 +52,7 @@ router.post('/login', async(req,res)=>{
         const token = jwt.sign(
             {_id , username , email , profileImageUrl ,bio },
             process.env.SECRET_KEY,
-             {expiresIn:"1d"}
+             {expiresIn:"1h"}
             );
         
         const {password, ...userinfo} = user.toObject();

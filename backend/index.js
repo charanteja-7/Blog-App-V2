@@ -18,7 +18,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-app.use('/images', express.static(path.join(__dirname, 'images'))); // Serve images from the 'images' directory
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoute);

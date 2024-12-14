@@ -1,94 +1,106 @@
-const express = require('express')
+const express = require('express');
 const router = express.Router();
 const Post = require('../models/Post');
-const Comments = require('../models/Comments')
+const Comments = require('../models/Comments');
 const verifyToken = require('../verifyToken');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const upload = multer();
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './images');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)); 
+router.post('/', verifyToken, upload.none(), async (req, res) => {
+  try {
+    const { title, description, coverImageURL, userId, category } = req.body;
+
+    // Validation checks
+    if (!title) {
+      return res.status(400).json({ error: "Title is required" });
     }
-});
-
-const upload = multer({ storage: storage });
-
-// Create post
-router.post('/', verifyToken, upload.single('coverImage'), async (req, res) => {
-    try {
-        const newPost = new Post({
-            title: req.body.title,
-            description: req.body.description,
-            coverImageURL: req.file ? req.file.filename : 'image.png',
-            userId: req.body.userId,
-            category: req.body.category || "Technology",
-        });
-        const savedPost = await newPost.save();
-        return res.status(200).json(savedPost);
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
+    if (!description) {
+      return res.status(400).json({ error: "Description is required" });
     }
+    if (!coverImageURL) {
+      return res.status(400).json({ error: "Cover Image URL is required" });
+    }
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const newPost = new Post({
+      title,
+      description,
+      coverImageURL,
+      userId,
+      category: category || "Technology",
+    });
+
+    const savedPost = await newPost.save();
+    return res.status(200).json(savedPost);
+  } catch (error) {
+    console.error("Detailed Error:", error);
+    return res.status(500).json({ 
+      error: "Internal Server Error", 
+      details: error.message 
+    });
+  }
 });
-
-
-
-
 
 // Update post
-router.put('/:id', verifyToken, upload.single('coverImage'), async (req, res) => {
+router.put('/:id', verifyToken, upload.none(), async (req, res) => {
     try {
+        // Retrieve the existing post by ID
         const existingPost = await Post.findById(req.params.id);
         if (!existingPost) {
             return res.status(404).json({ message: "Post not found" });
         }
-        const updateData = {
-            title: req.body.title,
-            description: req.body.description,
-            category: req.body.category,
-            userId: req.body.userId,
-        };
-        if (req.file) {
-            if (existingPost.coverImageURL !== 'image.png') {
-                const oldImagePath = path.join(__dirname, '../images', existingPost.coverImageURL);
-                fs.unlink(oldImagePath, (err) => {
-                    if (err) {
-                        console.error("Error deleting old image:", err);
-                    }
-                });
-            }
-            updateData.coverImageURL = req.file.filename;
+
+        // Destructure the request body
+        const { title, description, coverImageURL, userId, category } = req.body;
+        
+        // Validation checks (similar to POST route)
+        if (!title) {
+            return res.status(400).json({ error: "Title is required" });
         }
+        if (!description) {
+            return res.status(400).json({ error: "Description is required" });
+        }
+        if (!userId) {
+            return res.status(400).json({ error: "User ID is required" });
+        }
+
+        // Prepare update data
+        const updateData = {
+            title,
+            description,
+            category: category || "Technology",
+            userId,
+        };
+
+        // If coverImageURL is provided, update it
+        if (coverImageURL) {
+            updateData.coverImageURL = coverImageURL;
+        }
+
+        // Update the post with the new data
         const updatedPost = await Post.findByIdAndUpdate(req.params.id, 
-                                { $set: updateData }, { new: true });
+            { $set: updateData }, { new: true });
+
         return res.status(200).json(updatedPost);
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        // Detailed error logging
+        console.error("Detailed Error:", error);
+        return res.status(500).json({
+            error: "Internal Server Error",
+            details: error.message
+        });
     }
 });
 
 
-//delete post
+// Delete post
 router.delete('/:id', verifyToken, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
         if (!post) {
             return res.status(404).json({ message: "Post not found" });
-        }
-        const defaultImage = 'image.png'; 
-        const coverImagePath = path.join(__dirname, '../images', post.coverImageURL);
-        if (post.coverImageURL !== defaultImage) {
-            fs.unlink(coverImagePath, (err) => {
-                if (err) {
-                    console.error("Error deleting image:", err);
-                }
-            });
         }
         await Post.findByIdAndDelete(req.params.id);
         await Comments.deleteMany({ postId: req.params.id });
@@ -98,9 +110,8 @@ router.delete('/:id', verifyToken, async (req, res) => {
     }
 });
 
-
-//get the post by id
-router.get('/:id', async(req, res)=>{
+// Get post by ID
+router.get('/:id', async (req, res) => {
     try {
         const post = await Post.findById(req.params.id).populate('userId', 'username email profileImageUrl');
         if (!post) {
@@ -110,13 +121,12 @@ router.get('/:id', async(req, res)=>{
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
-})
+});
 
-
-//get all posts
-router.get('/',  async(req, res)=>{
+// Get all posts
+router.get('/', async (req, res) => {
     try {
-        const posts = await Post.find({}).sort({createdAt : -1}).populate('userId', 'username email profileImageUrl');
+        const posts = await Post.find({}).sort({ createdAt: -1 }).populate('userId', 'username email profileImageUrl');
         if (posts.length === 0) {
             return res.status(404).json({ message: "No posts found" });
         }
@@ -124,12 +134,12 @@ router.get('/',  async(req, res)=>{
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
-})
+});
 
-//get user posts
-router.get('/user/:userId',  async(req, res)=>{
+// Get user posts
+router.get('/user/:userId', async (req, res) => {
     try {
-        const posts = await Post.find({userId : req.params.userId});
+        const posts = await Post.find({ userId: req.params.userId });
         if (posts.length === 0) {
             return res.status(404).json({ message: "No posts found for this user" });
         }
@@ -137,10 +147,9 @@ router.get('/user/:userId',  async(req, res)=>{
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
-})
+});
 
-
-//like and unlike
+// Like and unlike post
 router.put('/:id/like', async (req, res) => {
     const postId = req.params.id;
     const { userId } = req.body;
@@ -162,7 +171,6 @@ router.put('/:id/like', async (req, res) => {
         return res.status(500).json({ success: false, message: 'Server error' });
     }
 });
-
 
 // Increment post views
 router.post('/:id/view', async (req, res) => {
@@ -189,7 +197,6 @@ router.post('/:id/view', async (req, res) => {
         });
 
     } catch (error) {
-        
         return res.status(500).json({
             success: false,
             message: 'Server error while updating views'
@@ -197,12 +204,11 @@ router.post('/:id/view', async (req, res) => {
     }
 });
 
-// get views
+// Get views
 router.get('/:id/views', async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-        
-        // Check if post exists
+
         if (!post) {
             return res.status(404).json({
                 success: false,
@@ -210,7 +216,6 @@ router.get('/:id/views', async (req, res) => {
             });
         }
 
-        // Return the views count
         return res.status(200).json({
             success: true,
             views: post.views || 0,
@@ -224,4 +229,5 @@ router.get('/:id/views', async (req, res) => {
         });
     }
 });
+
 module.exports = router;
